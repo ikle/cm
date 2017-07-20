@@ -1,6 +1,6 @@
-.PHONY: test kind parse
+.PHONY: test kind parse node
 
-test: kind parse
+test: kind parse node
 
 kind:
 	cd $(CURDIR)
@@ -27,3 +27,8 @@ parse:
 	[ "$$(./parse-test node.def kind)"	= "name, number"	]
 	[ "$$(./parse-test node.def help)"	= "test node"		]
 	[ "$$(./parse-test node.def validate)"	= "run bla bla bal"	]
+
+node:
+	cd $(CURDIR)
+
+	./node-base-test abc def 'ghi jkl' nm ' o p\\ "rs" tu'
