@@ -1,0 +1,64 @@
+#include <ctype.h>
+#include <stdlib.h>
+#include <regex.h>
+
+#include "cm-kind.h"
+#include "cm-parse.h"
+
+/* compare first term in expression with another term */
+static int compare_prefix (const char *expr, const char *term)
+{
+	for (; *expr == *term; ++expr, ++term)
+		if (*term == '\0')
+			return 1;
+
+	return *expr == ',' && *term == '\0';
+}
+
+static const char *next_term (const char *p)
+{
+	for (; *p != ','; ++p)
+		if (*p == '\0')
+			return NULL;
+
+	for (++p; isspace (*p); ++p) {}
+
+	return p;
+}
+
+static int match (const char *re, const char *value)
+{
+	regex_t preg;
+	int ret;
+
+	if (regcomp (&preg, re, REG_EXTENDED | REG_NOSUB) != 0)
+		return 0;
+
+	ret = regexec (&preg, value, 0, NULL, 0) == 0;
+
+	regfree (&preg);
+	return ret;
+}
+
+static const struct map {
+	const char *name, *re;
+} map[] = {
+	{ "name",	"^[A-Za-z](-?[0-9A-Za-z])*$"		},
+	{ "number",	"^(0|([1-9][0-9]*))$"			},
+	{}
+};
+
+int cm_kind_validate (const char *kind, const char *value)
+{
+	const struct map *p;
+
+	do {
+		for (p = map; p->name != NULL; ++p)
+			if (compare_prefix (kind, p->name) &&
+			    match (p->re, value))
+				return 1;
+	}
+	while ((kind = next_term (kind)) != NULL);
+
+	return 0;
+}
