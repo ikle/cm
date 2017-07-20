@@ -1,6 +1,6 @@
-.PHONY: test kind
+.PHONY: test kind parse
 
-test: kind
+test: kind parse
 
 kind:
 	cd $(CURDIR)
@@ -20,3 +20,10 @@ kind:
 	if ./kind-test number a			; then exit 1; fi
 
 	./kind-test 'name, number' 0
+
+parse:
+	cd $(CURDIR)
+
+	[ "$$(./parse-test node.def kind)"	= "name, number"	]
+	[ "$$(./parse-test node.def help)"	= "test node"		]
+	[ "$$(./parse-test node.def validate)"	= "run bla bla bal"	]
