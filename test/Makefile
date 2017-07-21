@@ -43,3 +43,9 @@ node:
 	  "line[18/38] = abc/def/ghi jkl/nm" ]
 	[ "$$(./node-print-test ' ' abc def 'ghi jkl' 927 ' op\ "rs" tu')" = \
 	  'line[39/38] = abc def "ghi jkl" 927 " op\\ \"rs\" t' ]
+
+	./node-validate-test spec interfaces ethernet eth0 mtu 1500
+
+	if ./node-validate-test spec interfaces ethernet     0 mtu 1500; then exit 1; fi
+	if ./node-validate-test spec interfaces ethernet    e0 mtu beep; then exit 1; fi
+	if ./node-validate-test spec interfaces ethernets eth0 mtu 1500; then exit 1; fi

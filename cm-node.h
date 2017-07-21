@@ -33,4 +33,6 @@ int cm_node_push_list (struct cm_node **o, char *argv[]);
  */
 size_t cm_node_print (struct cm_node *o, char *buf, size_t size, int sep);
 
+int cm_node_validate (const char *conf, struct cm_node *o);
+
 #endif  /* CM_NODE_H */

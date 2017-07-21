@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "cm-kind.h"
 #include "cm-node.h"
+#include "cm-parse.h"
 
 struct cm_node {
 	long refs;
@@ -135,4 +137,58 @@ size_t cm_node_print (struct cm_node *o, char *buf, size_t size, int sep)
 		return total + snprintf (buf, size, "%s", o->value);
 
 	return total + cm_print_escaped (o->value, buf, size);
+}
+
+static int validate_value (const char *spec, const char *value)
+{
+	char *kind;
+	int ret;
+
+	if ((kind = cm_parse (spec, "kind")) == NULL)
+		return cm_kind_validate ("name", value);
+
+	ret = cm_kind_validate (kind, value);
+	free (kind);
+	return ret;
+}
+
+static size_t validate (struct cm_node *o, char *buf, size_t size)
+{
+	size_t total = strlen (buf), room = size, len;
+
+	if (o->root != NULL) {
+		if ((total = validate (o->root, buf, size)) == 0 ||
+		    total >= size)
+			return 0;
+
+		room = get_room (total, size);
+
+		total += snprintf (buf + total, room, "/");
+		room = get_room (total, size);
+	}
+
+	len = snprintf (buf + total, room, "%s", o->value);
+
+	if ((total + len) >= size)
+		return 0;
+
+	if (access (buf, F_OK) == 0)  /* is regular? */
+		return total + len;
+
+	len = snprintf (buf + total, room, "node.spec");
+
+	if ((total + len) >= size || !validate_value (buf, o->value))
+		return 0;
+
+	return total + snprintf (buf + total, room, "node.tag");
+}
+
+int cm_node_validate (const char *conf, struct cm_node *o)
+{
+	char buf[BUFSIZ];
+
+	if (snprintf (buf, sizeof (buf), "%s/", conf) >= sizeof (buf))
+		return 0;
+
+	return validate (o, buf, sizeof (buf)) > 0;
 }
