@@ -1,5 +1,9 @@
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
+#include <wctype.h>
+
 #include <regex.h>
 
 #include "cm-kind.h"
@@ -48,6 +52,23 @@ static const struct map {
 	{}
 };
 
+static int is_print (const char *value)
+{
+	size_t size = strlen (value);
+	mbstate_t state;
+	wchar_t wc;
+	int len;
+
+	memset (&state, 0, sizeof (state));
+
+	for (; *value != '\0'; value += len)
+		if ((len = mbrtowc (&wc, value, size, &state)) < 0 ||
+		    !iswprint (wc))
+			return 0;
+
+	return 1;
+}
+
 int cm_kind_validate (const char *kind, const char *value)
 {
 	const struct map *p;
@@ -57,6 +78,9 @@ int cm_kind_validate (const char *kind, const char *value)
 			if (compare_prefix (kind, p->name) &&
 			    match (p->re, value))
 				return 1;
+
+		if (compare_prefix (kind, "print") && is_print (value))
+			return 1;
 	}
 	while ((kind = next_term (kind)) != NULL);
 

@@ -21,6 +21,12 @@ kind:
 
 	./kind-test 'name, number' 0
 
+	# next tests requires UTF-8 locale
+
+	# phrase from The Tale of Igor's Campaign
+	./kind-test print 'Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы'
+	if ./kind-test print "$$(printf 'string with \n control character')"; then exit 1; fi
+
 parse:
 	cd $(CURDIR)
 
