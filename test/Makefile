@@ -49,3 +49,5 @@ node:
 	if ./node-validate-test spec interfaces ethernet     0 mtu 1500; then exit 1; fi
 	if ./node-validate-test spec interfaces ethernet    e0 mtu beep; then exit 1; fi
 	if ./node-validate-test spec interfaces ethernets eth0 mtu 1500; then exit 1; fi
+
+	[ "$$(./node-read-test conf)" = 'interfaces ethernet eth0 mtu "test value"' ]

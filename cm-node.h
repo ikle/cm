@@ -2,6 +2,7 @@
 #define CM_NODE_H  1
 
 #include <stddef.h>
+#include <cm/compiler.h>
 
 struct cm_node;
 
@@ -17,6 +18,16 @@ char *cm_node_pop (struct cm_node **o);
  * create a node stack from program arguments.
  */
 int cm_node_push_list (struct cm_node **o, char *argv[]);
+
+/*
+ * The cm_node_read pushes NULL-terminated sequence of values into the
+ * specified node stack.
+ *
+ * If the last value equal * (star character) then it reads real value
+ * from the configuration and pushes it on top of stack.
+ */
+int cm_node_read (const char *conf, struct cm_node **o,
+		  const char *node, ...) sentinel;
 
 /*
  * The cm_node_print function write the node path representation into
