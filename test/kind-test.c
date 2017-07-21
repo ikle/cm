@@ -6,7 +6,7 @@ int main (int argc, char *argv[])
 	const char *kind, *value;
 
 	if (argc != 3) {
-		fprintf (stderr, "usage:\n\tkind <kind> <value>\n");
+		fprintf (stderr, "usage:\n\tkind-test <kind> <value>\n");
 		return 1;
 	}
 
