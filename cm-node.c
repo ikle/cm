@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -60,4 +61,61 @@ char *cm_node_pop (struct cm_node **o)
 	cm_node_unref (head);
 	*o = root;
 	return value;
+}
+
+#define put_char(a)  do {		\
+	if (size > 1)			\
+		*buf++ = (a), --size;	\
+					\
+	++total;			\
+}					\
+while (0)
+
+static size_t cm_print_escaped (const char *p, char *buf, size_t size)
+{
+	size_t total = 0;
+
+	put_char ('\"');
+
+	for (; *p != '\0'; ++p)
+		switch (*p) {
+		case '"':
+		case '\\':
+			put_char ('\\');
+			/* passthrough */
+		default:
+			put_char (*p);
+		}
+
+	put_char ('\"');
+
+	if (size > 0)
+		*buf = '\0';
+
+	return total;
+}
+
+#undef put_char
+
+static size_t get_room (size_t busy, size_t room)
+{
+	return busy < room ? room - busy : 0;
+}
+
+size_t cm_node_print (struct cm_node *o, char *buf, size_t size, int sep)
+{
+	size_t len, total = 0;
+
+	if (o->root != NULL) {
+		len = cm_node_print (o->root, buf, size, sep);
+		total += len, buf += len, size = get_room (len, size);
+
+		len = snprintf (buf, size, "%c", sep);
+		total += len, buf += len, size = get_room (len, size);
+	}
+
+	if (sep != ' ')
+		return total + snprintf (buf, size, "%s", o->value);
+
+	return total + cm_print_escaped (o->value, buf, size);
 }

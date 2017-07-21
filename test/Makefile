@@ -32,3 +32,8 @@ node:
 	cd $(CURDIR)
 
 	./node-base-test abc def 'ghi jkl' nm ' o p\\ "rs" tu'
+
+	[ "$$(./node-print-test /   abc def 'ghi jkl' nm)" = \
+	  "line[18/44] = abc/def/ghi jkl/nm" ]
+	[ "$$(./node-print-test ' ' abc def 'ghi jkl' nm ' op\ "rs" tu')" = \
+	  'line[44/44] = "abc" "def" "ghi jkl" "nm" " op\\ \"rs\" tu' ]
