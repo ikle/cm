@@ -44,15 +44,7 @@ static int match (const char *re, const char *value)
 	return ret;
 }
 
-static const struct map {
-	const char *name, *re;
-} map[] = {
-	{ "name",	"^[A-Za-z](-?[0-9A-Za-z])*$"		},
-	{ "number",	"^(0|([1-9][0-9]*))$"			},
-	{}
-};
-
-static int is_print (const char *value)
+static int is_print (const char *cookie, const char *value)
 {
 	size_t size = strlen (value);
 	mbstate_t state;
@@ -69,6 +61,28 @@ static int is_print (const char *value)
 	return 1;
 }
 
+static const struct map {
+	const char *name, *cookie;
+	int (*match) (const char *cookie, const char *value);
+} map[] = {
+	{
+		"name",
+		"^[A-Za-z](-?[0-9A-Za-z])*$",
+		match,
+	},
+	{
+		"number",
+		"^(0|([1-9][0-9]*))$",
+		match,
+	},
+	{
+		"print",
+		NULL,
+		is_print,
+	},
+	{}
+};
+
 int cm_kind_validate (const char *kind, const char *value)
 {
 	const struct map *p;
@@ -76,11 +90,8 @@ int cm_kind_validate (const char *kind, const char *value)
 	do {
 		for (p = map; p->name != NULL; ++p)
 			if (compare_prefix (kind, p->name) &&
-			    match (p->re, value))
+			    p->match (p->cookie, value))
 				return 1;
-
-		if (compare_prefix (kind, "print") && is_print (value))
-			return 1;
 	}
 	while ((kind = next_term (kind)) != NULL);
 
