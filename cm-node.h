@@ -12,6 +12,13 @@ int cm_node_push (struct cm_node **o, const char *value);
 char *cm_node_pop (struct cm_node **o);
 
 /*
+ * The cm_node_push_list pushes NULL-terminated sequence of values into
+ * the specified node stack. The main purpose of this function is to
+ * create a node stack from program arguments.
+ */
+int cm_node_push_list (struct cm_node **o, char *argv[]);
+
+/*
  * The cm_node_print function write the node path representation into
  * the supplied buffer using the sep as node separator. If separator is
  * space character then node value will be quoted.

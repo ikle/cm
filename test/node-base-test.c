@@ -4,7 +4,6 @@
 
 int main (int argc, char *argv[])
 {
-	char **list;
 	struct cm_node *a, *b;
 
 	if (argc < 2) {
@@ -12,11 +11,12 @@ int main (int argc, char *argv[])
 		return 1;
 	}
 
-	for (list = argv + 1, a = NULL; *list != NULL; ++list)
-		if (!cm_node_push (&a, *list)) {
-			perror ("cannot push node");
-			goto no_a;
-		}
+	a = NULL;
+
+	if (!cm_node_push_list (&a, argv + 1)) {
+		perror ("cannot push node");
+		goto no_a;
+	}
 
 	cm_node_ref (a);
 	b = a;

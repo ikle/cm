@@ -5,7 +5,6 @@
 
 int main (int argc, char *argv[])
 {
-	char **list;
 	struct cm_node *n;
 	char buf[38];
 	size_t len;
@@ -16,11 +15,12 @@ int main (int argc, char *argv[])
 		return 1;
 	}
 
-	for (list = argv + 2, n = NULL; *list != NULL; ++list)
-		if (!cm_node_push (&n, *list)) {
-			perror ("cannot push node");
-			goto no_push;
-		}
+	n = NULL;
+
+	if (!cm_node_push_list (&n, argv + 2)) {
+		perror ("cannot push node");
+		goto no_push;
+	}
 
 	len = cm_node_print (n, buf, sizeof (buf), argv[1][0]);
 

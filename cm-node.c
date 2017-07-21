@@ -64,6 +64,22 @@ char *cm_node_pop (struct cm_node **o)
 	return value;
 }
 
+int cm_node_push_list (struct cm_node **o, char *argv[])
+{
+	size_t i;
+
+	for (i = 0; argv[i] != NULL; ++i)
+		if (!cm_node_push (o, argv[i]))
+			goto rewind;
+
+	return 1;
+rewind:
+	for (; i > 0; --i)
+		free (cm_node_pop (o));
+
+	return 0;
+}
+
 #define put_char(a)  do {		\
 	if (size > 1)			\
 		*buf++ = (a), --size;	\
