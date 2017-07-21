@@ -24,9 +24,9 @@ kind:
 parse:
 	cd $(CURDIR)
 
-	[ "$$(./parse-test node.def kind)"	= "name, number"	]
-	[ "$$(./parse-test node.def help)"	= "test node"		]
-	[ "$$(./parse-test node.def validate)"	= "run bla bla bal"	]
+	[ "$$(./parse-test node.spec kind)"	= "name, number"	]
+	[ "$$(./parse-test node.spec help)"	= "test node"		]
+	[ "$$(./parse-test node.spec validate)"	= "run bla bla bal"	]
 
 node:
 	cd $(CURDIR)
