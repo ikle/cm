@@ -64,21 +64,28 @@ static int is_print (const char *cookie, const char *value)
 static const struct map {
 	const char *name, *cookie;
 	int (*match) (const char *cookie, const char *value);
+	const char *help;
 } map[] = {
 	{
 		"name",
 		"^[A-Za-z](-?[0-9A-Za-z])*$",
 		match,
+		"sequence of an one ore more Latin letters, digits and "
+		"dashes; a dash shall not be the last character; a dash "
+		"shall not be immediately followed by another dash",
 	},
 	{
 		"number",
 		"^(0|([1-9][0-9]*))$",
 		match,
+		"sequence of an one ore more digits; the first digit "
+		"shall not be zero unless it is a single digit",
 	},
 	{
 		"print",
 		NULL,
 		is_print,
+		"sequence of an any printable characters including space",
 	},
 	{}
 };
@@ -96,4 +103,24 @@ int cm_kind_validate (const char *kind, const char *value)
 	while ((kind = next_term (kind)) != NULL);
 
 	return 0;
+}
+
+int cm_kind_help (const char *kind, size_t index,
+		  const char **name, const char **help)
+{
+	const struct map *p;
+
+	for (; index > 0; --index, kind = next_term (kind))
+		if (kind == NULL)
+			return 0;
+
+	for (p = map; p->name != NULL; ++p)
+		if (compare_prefix (kind, p->name))
+			goto found;
+
+	return 0;
+found:
+	*name = p->name;
+	*help = p->help;
+	return 1;
 }
