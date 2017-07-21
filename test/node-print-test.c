@@ -7,7 +7,7 @@ int main (int argc, char *argv[])
 {
 	char **list;
 	struct cm_node *n;
-	char buf[44];
+	char buf[38];
 	size_t len;
 
 	if (argc < 3 || strlen (argv[1]) != 1) {

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "cm-kind.h"
 #include "cm-node.h"
 
 struct cm_node {
@@ -114,7 +115,7 @@ size_t cm_node_print (struct cm_node *o, char *buf, size_t size, int sep)
 		total += len, buf += len, size = get_room (len, size);
 	}
 
-	if (sep != ' ')
+	if (sep != ' ' || cm_kind_validate ("name, number", o->value))
 		return total + snprintf (buf, size, "%s", o->value);
 
 	return total + cm_print_escaped (o->value, buf, size);
