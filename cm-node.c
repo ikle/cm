@@ -15,7 +15,8 @@ struct cm_node {
 
 void cm_node_ref (struct cm_node *o)
 {
-	++o->refs;
+	if (o != NULL)
+		++o->refs;
 }
 
 void cm_node_unref (struct cm_node *o)
