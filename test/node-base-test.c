@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../cm-node.h"
+#include <cm/node.h>
 
 int main (int argc, char *argv[])
 {

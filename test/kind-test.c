@@ -1,7 +1,7 @@
 #include <locale.h>
 #include <stdio.h>
 
-#include "../cm-kind.h"
+#include <cm/kind.h>
 
 int main (int argc, char *argv[])
 {

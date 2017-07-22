@@ -6,8 +6,8 @@
 
 #include <regex.h>
 
-#include "cm-kind.h"
-#include "cm-parse.h"
+#include <cm/kind.h>
+#include <cm/parse.h>
 
 /* compare first term in expression with another term */
 static int compare_prefix (const char *expr, const char *term)

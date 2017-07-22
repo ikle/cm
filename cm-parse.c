@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "cm-parse.h"
+#include <cm/parse.h>
 
 static char *chomp (char *line)
 {

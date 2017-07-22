@@ -5,9 +5,9 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "cm-kind.h"
-#include "cm-node.h"
-#include "cm-parse.h"
+#include <cm/kind.h>
+#include <cm/node.h>
+#include <cm/parse.h>
 
 struct cm_node {
 	long refs;
