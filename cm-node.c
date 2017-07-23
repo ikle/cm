@@ -299,3 +299,52 @@ no_node:
 	va_end (ap);
 	return 0;
 }
+
+static int file_write_all (const char *path, const char *value)
+{
+	const size_t size = strlen (value);
+	FILE *f;
+
+	if ((f = fopen (path, "wb")) == NULL)
+		goto no_file;
+
+	if (fwrite (value, size, 1, f) != 1 || fputc ('\n', f) == EOF)
+		goto no_write;
+
+	fclose (f);
+	return 1;
+no_write:
+	fclose (f);
+no_file:
+	return 0;
+}
+
+int cm_node_write (const char *conf, struct cm_node *o)
+{
+	struct item *tail = o->tail;
+
+	const size_t size = o->end - o->tail->value;
+	char *buf = o->tail->value;
+
+	size_t total, room;
+
+	total = snprintf (buf, size, "%s/", conf);
+	room = get_room (total, size);
+
+	if (tail->parent == NULL)
+		return 0;  /* EINVAL */
+
+	o->tail = tail->parent;
+
+	total += print (o, buf + total, room, '/');
+	room = get_room (total, size);
+
+	o->tail = tail;
+
+	total += snprintf (buf + total, room, "/node.val");
+
+	if (total >= size || !file_write_all (buf, tail->parent->value))
+		return 0;
+
+	return 1;
+}

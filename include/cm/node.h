@@ -67,4 +67,12 @@ int cm_node_validate (const char *conf, struct cm_node *o);
 int cm_node_read (const char *conf, struct cm_node *o,
 		  const char *node, ...) sentinel;
 
+/*
+ * The cm_node_write function writes the node stack into configuration.
+ * The top of stack must be the value node.
+ *
+ * Returns non-zero on success.
+ */
+int cm_node_write (const char *conf, struct cm_node *o);
+
 #endif  /* CM_NODE_H */
