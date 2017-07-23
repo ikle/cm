@@ -202,12 +202,12 @@ static int validate (struct cm_node *o, char *buf, size_t size)
 
 int cm_node_validate (const char *conf, struct cm_node *o)
 {
-	char buf[BUFSIZ];
+	const size_t size = o->end - o->tail->value;
 
-	if (snprintf (buf, sizeof (buf), "%s/", conf) >= sizeof (buf))
+	if (snprintf (o->tail->value, size, "%s/", conf) >= size)
 		return 0;
 
-	return validate (o, buf, sizeof (buf));
+	return validate (o, o->tail->value, size);
 }
 
 static char *file_read_all (const char *path)

@@ -36,6 +36,13 @@ int cm_node_read (const char *conf, struct cm_node *o,
  */
 const char *cm_node_print (struct cm_node *o, int sep);
 
+/*
+ * The cm_node_validate function validates the specified node stack
+ * against configuration specification.
+ *
+ * Returns non-zero on success, zero on syntax error or on internal node
+ * buffer overflow.
+ */
 int cm_node_validate (const char *conf, struct cm_node *o);
 
 #endif  /* CM_NODE_H */
