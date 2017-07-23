@@ -19,17 +19,16 @@ static char *chomp (char *line)
 	return line;
 }
 
-char *cm_parse (const char *spec, const char *node)
+char *cm_parse (const char *spec, const char *node, char *buf, size_t size)
 {
 	const size_t len = strlen (node);
 	FILE *f;
-	char line[256];
 
 	if ((f = fopen (spec, "r")) == NULL)
 		return NULL;
 
-	while (fgets (line, sizeof (line), f) != NULL)
-		if (strncmp (line, node, len) == 0 && line[len] == ':')
+	while (fgets (buf, size, f) != NULL)
+		if (strncmp (buf, node, len) == 0 && buf[len] == ':')
 			goto found;
 
 	fclose (f);
@@ -37,5 +36,5 @@ char *cm_parse (const char *spec, const char *node)
 	return NULL;
 found:
 	fclose (f);
-	return strdup (chomp (line + len + 1));
+	return chomp (buf + len + 1);
 }

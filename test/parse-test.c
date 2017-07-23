@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include <stdlib.h>
-
 #include <cm/parse.h>
 
 int main (int argc, char *argv[])
 {
+	char buf[BUFSIZ];
 	const char *spec, *node;
 	char *value;
 
@@ -16,12 +15,11 @@ int main (int argc, char *argv[])
 	spec = argv[1];
 	node = argv[2];
 
-	if ((value = cm_parse (spec, node)) == NULL) {
+	if ((value = cm_parse (spec, node, buf, sizeof (buf))) == NULL) {
 		perror ("parse-test");
 		return 1;
 	}
 
 	printf ("%s\n", value);
-	free (value);
 	return 0;
 }

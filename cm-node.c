@@ -161,14 +161,14 @@ const char *cm_node_print (struct cm_node *o, int sep)
 
 static int validate_value (const char *spec, const char *value)
 {
+	char buf[32];
 	char *kind;
 	int ret;
 
-	if ((kind = cm_parse (spec, "kind")) == NULL)
+	if ((kind = cm_parse (spec, "kind", buf, sizeof (buf))) == NULL)
 		return cm_kind_validate ("name", value);
 
 	ret = cm_kind_validate (kind, value);
-	free (kind);
 	return ret;
 }
 
