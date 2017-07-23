@@ -30,3 +30,16 @@
     reading procedures?
 
     A: Yes, implemented.
+
+# Primary tasks
+
+1.  [ ] Create leading directories for non-leaf nodes while writing node
+    stack. ~~(Use recursion.)~~
+2.  [ ] Implement `cm_node_run` — execute the supplied node stack, wait for
+    process termination and return result value.
+3.  [ ] Separate all file operations into the own module.
+4.  [ ] Implement `cm_spec_help (spec, node)`.
+5.  [ ] Implement `cm_spec_complete (spec, node, prefix)`
+6.  [ ] ~~Add support for kind references in specs (`kind: refs interfaces
+    ethernet *`)~~. (Violates: cross-dependencies disallowed.) Add `refs:
+    interfaces ethernet` for completion?
