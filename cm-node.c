@@ -62,7 +62,7 @@ int cm_node_push (struct cm_node *n, const char *value)
 	return 1;
 }
 
-char *cm_node_pop (struct cm_node *n)
+const char *cm_node_pop (struct cm_node *n)
 {
 	struct item *i = n->tail;
 

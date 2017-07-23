@@ -28,7 +28,7 @@ int cm_node_push (struct cm_node *o, const char *value);
  * was empty. The return value lies in the internal node buffer, which
  * can be overwritten by subsequent calls.
  */
-char *cm_node_pop (struct cm_node *o);
+const char *cm_node_pop (struct cm_node *o);
 
 /*
  * The cm_node_push_list pushes NULL-terminated sequence of values into
