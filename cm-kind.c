@@ -29,7 +29,7 @@ static const char *next_term (const char *p)
 	return p;
 }
 
-static int is_name (const char *cookie, const char *value)
+static int is_name (const char *value)
 {
 	char *locale = setlocale (LC_CTYPE, "C");
 
@@ -50,7 +50,7 @@ error:
 	return 0;
 }
 
-static int is_number (const char *cookie, const char *value)
+static int is_number (const char *value)
 {
 	if (value[0] == '0')
 		return value[1] == '\0';
@@ -62,7 +62,7 @@ static int is_number (const char *cookie, const char *value)
 	return 1;
 }
 
-static int is_print (const char *cookie, const char *value)
+static int is_print (const char *value)
 {
 	size_t size = strlen (value);
 	mbstate_t state;
@@ -80,13 +80,12 @@ static int is_print (const char *cookie, const char *value)
 }
 
 static const struct map {
-	const char *name, *cookie;
-	int (*match) (const char *cookie, const char *value);
+	const char *name;
+	int (*match) (const char *value);
 	const char *help;
 } map[] = {
 	{
 		"name",
-		NULL,
 		is_name,
 		"sequence of an one ore more Latin letters, digits and "
 		"dashes; a dash shall not be the last character; a dash "
@@ -94,14 +93,12 @@ static const struct map {
 	},
 	{
 		"number",
-		NULL,
 		is_number,
 		"sequence of an one ore more digits; the first digit "
 		"shall not be zero unless it is a single digit",
 	},
 	{
 		"print",
-		NULL,
 		is_print,
 		"sequence of an any printable characters including space",
 	},
@@ -115,7 +112,7 @@ int cm_kind_validate (const char *kind, const char *value)
 	do {
 		for (p = map; p->name != NULL; ++p)
 			if (compare_prefix (kind, p->name) &&
-			    p->match (p->cookie, value))
+			    p->match (value))
 				return 1;
 	}
 	while ((kind = next_term (kind)) != NULL);
