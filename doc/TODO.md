@@ -26,5 +26,7 @@
     NOTE: With this model node printing and validation procedures need
     not call itself recursively — just iterate from bottom node (buffer
     head) up to top.
-4.  [ ] Q: Can we use built-in buffer in node printing, validation and
+4.  [x] Q: Can we use built-in buffer in node printing, validation and
     reading procedures?
+
+    A: Yes, implemented.
