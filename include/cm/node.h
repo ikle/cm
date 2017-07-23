@@ -6,15 +6,15 @@
 
 struct cm_node *cm_node_init (void *buf, size_t size);
 
-int cm_node_push (struct cm_node **o, const char *value);
-char *cm_node_pop (struct cm_node **o);
+int cm_node_push (struct cm_node *o, const char *value);
+char *cm_node_pop (struct cm_node *o);
 
 /*
  * The cm_node_push_list pushes NULL-terminated sequence of values into
  * the specified node stack. The main purpose of this function is to
  * create a node stack from program arguments.
  */
-int cm_node_push_list (struct cm_node **o, char *argv[]);
+int cm_node_push_list (struct cm_node *o, char *argv[]);
 
 /*
  * The cm_node_read pushes NULL-terminated sequence of values into the
@@ -23,7 +23,7 @@ int cm_node_push_list (struct cm_node **o, char *argv[]);
  * If the last value equal * (star character) then it reads real value
  * from the configuration and pushes it on top of stack.
  */
-int cm_node_read (const char *conf, struct cm_node **o,
+int cm_node_read (const char *conf, struct cm_node *o,
 		  const char *node, ...) sentinel;
 
 /*

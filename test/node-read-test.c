@@ -19,7 +19,7 @@ int main (int argc, char *argv[])
 	conf = argv[1];
 	n = cm_node_init (buf, size);
 
-	if (!cm_node_read (conf, &n, "interfaces", "ethernet", "eth0",
+	if (!cm_node_read (conf, n, "interfaces", "ethernet", "eth0",
 			   "mtu", "*", NULL)) {
 		perror ("cannot read node");
 		return 1;

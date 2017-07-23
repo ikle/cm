@@ -48,9 +48,8 @@ static struct item *next_item (struct item *i, const char *value)
 	return align (i->value + strlen (value) + 1);
 }
 
-int cm_node_push (struct cm_node **o, const char *value)
+int cm_node_push (struct cm_node *n, const char *value)
 {
-	struct cm_node *n = *o;
 	struct item *i = n->tail;
 	struct item *tail = next_item (i, value);
 
@@ -63,9 +62,8 @@ int cm_node_push (struct cm_node **o, const char *value)
 	return 1;
 }
 
-char *cm_node_pop (struct cm_node **o)
+char *cm_node_pop (struct cm_node *n)
 {
-	struct cm_node *n = *o;
 	struct item *i = n->tail;
 
 	if (i == NULL)
@@ -75,9 +73,9 @@ char *cm_node_pop (struct cm_node **o)
 	return i->value;
 }
 
-int cm_node_push_list (struct cm_node **o, char *argv[])
+int cm_node_push_list (struct cm_node *o, char *argv[])
 {
-	struct item *tail = (*o)->tail;
+	struct item *tail = o->tail;
 	size_t i;
 
 	for (i = 0; argv[i] != NULL; ++i)
@@ -86,7 +84,7 @@ int cm_node_push_list (struct cm_node **o, char *argv[])
 
 	return 1;
 rewind:
-	(*o)->tail = tail;  /* rewind: remove incomplete path */
+	o->tail = tail;  /* rewind: remove incomplete path */
 	return 0;
 }
 
@@ -261,11 +259,11 @@ static char *read_value (const char *conf, struct cm_node *o)
 	return value;
 }
 
-int cm_node_read (const char *conf, struct cm_node **o,
+int cm_node_read (const char *conf, struct cm_node *o,
 		  const char *node, ...)
 {
 	va_list ap;
-	struct item *tail = (*o)->tail;
+	struct item *tail = o->tail;
 	char *value;
 
 	va_start (ap, node);
@@ -273,7 +271,7 @@ int cm_node_read (const char *conf, struct cm_node **o,
 	for (; node != NULL; node = va_arg (ap, const char *)) {
 		if (strcmp (node , "*") == 0) {
 			if (va_arg (ap, const char *) != NULL ||
-			    (value = read_value (conf, *o)) == NULL)
+			    (value = read_value (conf, o)) == NULL)
 				goto no_node;
 
 			if (!cm_node_push (o, value))
@@ -292,7 +290,7 @@ int cm_node_read (const char *conf, struct cm_node **o,
 no_value:
 	free (value);
 no_node:
-	(*o)->tail = tail;  /* rewind: remove incomplete path */
+	o->tail = tail;  /* rewind: remove incomplete path */
 	va_end (ap);
 	return 0;
 }

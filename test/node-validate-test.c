@@ -19,7 +19,7 @@ int main (int argc, char *argv[])
 	conf = argv[1];
 	n = cm_node_init (buf, size);
 
-	if (!cm_node_push_list (&n, argv + 2)) {
+	if (!cm_node_push_list (n, argv + 2)) {
 		perror ("cannot push node");
 		return 1;
 	}
