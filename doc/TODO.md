@@ -1,6 +1,6 @@
 # Remove memory allocations on all intermediate stages
 
-1.  [ ] The parser module should work on a given buffer and return result
+1.  [x] The parser module should work on a given buffer and return result
     in it.
 2.  [x] ~~The kind module should precompile all regular expressions on
     the initialization stage.~~ Do not use regular expressions at all — use
