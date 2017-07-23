@@ -127,7 +127,7 @@ static size_t get_room (size_t busy, size_t room)
 	return busy < room ? room - busy : 0;
 }
 
-size_t print (struct cm_node *o, char *buf, size_t size, int sep)
+static size_t print (struct cm_node *o, char *buf, size_t size, int sep)
 {
 	struct item *i;
 	size_t len, total = 0;
