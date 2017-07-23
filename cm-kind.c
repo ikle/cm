@@ -1,10 +1,9 @@
 #include <ctype.h>
+#include <locale.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
 #include <wctype.h>
-
-#include <regex.h>
 
 #include <cm/kind.h>
 #include <cm/parse.h>
@@ -30,18 +29,25 @@ static const char *next_term (const char *p)
 	return p;
 }
 
-static int match (const char *re, const char *value)
+static int is_name (const char *cookie, const char *value)
 {
-	regex_t preg;
-	int ret;
+	char *locale = setlocale (LC_CTYPE, "C");
 
-	if (regcomp (&preg, re, REG_EXTENDED | REG_NOSUB) != 0)
-		return 0;
+	if (!isalpha (value[0]))
+		goto error;
 
-	ret = regexec (&preg, value, 0, NULL, 0) == 0;
+	for (++value; *value != '\0'; ++value) {
+		if (*value == '-')
+			++value;
 
-	regfree (&preg);
-	return ret;
+		if (!isalnum (*value))
+			goto error;
+	}
+
+	return 1;
+error:
+	setlocale (LC_CTYPE, locale);
+	return 0;
 }
 
 static int is_number (const char *cookie, const char *value)
@@ -80,8 +86,8 @@ static const struct map {
 } map[] = {
 	{
 		"name",
-		"^[A-Za-z](-?[0-9A-Za-z])*$",
-		match,
+		NULL,
+		is_name,
 		"sequence of an one ore more Latin letters, digits and "
 		"dashes; a dash shall not be the last character; a dash "
 		"shall not be immediately followed by another dash",
