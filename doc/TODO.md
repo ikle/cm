@@ -2,10 +2,10 @@
 
 1.  [ ] The parser module should work on a given buffer and return result
     in it.
-2.  [ ] ~~The kind module should precompile all regular expressions on
+2.  [x] ~~The kind module should precompile all regular expressions on
     the initialization stage.~~ Do not use regular expressions at all — use
-    hand-crafted procedures. Limit allowed name lenght (for example to 32
-    characters).
+    hand-crafted procedures. ~~Limit allowed name lenght (for example to 32
+    characters)~~ (it will be limited indirectly by node buffer size).
 3.  [x] Allocate all nodes on a given buffer. Remove node references as it
     will be not needed with new interface.
 
