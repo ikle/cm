@@ -213,25 +213,25 @@ int cm_node_validate (const char *conf, struct cm_node *o)
 static char *file_read_all (const char *path)
 {
 	FILE *f;
-	long size;
+	long file_size;
 	char *value;
 
 	if ((f = fopen (path, "rb")) == NULL)
 		goto no_file;
 
-	if (fseek (f, 0, SEEK_END) != 0 || (size = ftell (f)) < 0)
+	if (fseek (f, 0, SEEK_END) != 0 || (file_size = ftell (f)) < 0)
 		goto no_size;
 
 	rewind (f);
 
-	if ((value = malloc (size + 1)) == NULL)
+	if ((value = malloc (file_size + 1)) == NULL)
 		goto no_value;
 
-	if (fread (value, size, 1, f) != 1)
+	if (fread (value, file_size, 1, f) != 1)
 		goto no_read;
 
 	fclose (f);
-	value[size] = '\0';
+	value[file_size] = '\0';
 	return value;
 no_read:
 	free (value);
