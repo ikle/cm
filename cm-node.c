@@ -244,20 +244,22 @@ no_file:
 
 static char *read_value (const char *conf, struct cm_node *o)
 {
-	char buf[BUFSIZ];
+	const size_t size = o->end - o->tail->value;
+	char *buf = o->tail->value;
+
 	size_t total, room;
 	char *value;
 	size_t len;
 
-	total = snprintf (buf, sizeof (buf), "%s/", conf);
-	room = get_room (total, sizeof (buf));
+	total = snprintf (buf, size, "%s/", conf);
+	room = get_room (total, size);
 
 	total += print (o, buf + total, room, '/');
-	room = get_room (total, sizeof (buf));
+	room = get_room (total, size);
 
 	total += snprintf (buf + total, room, "/node.val");
 
-	if (total >= sizeof (buf))
+	if (total >= size)
 		return NULL;
 
 	if ((value = file_read_all (buf)) == NULL)
