@@ -44,6 +44,18 @@ static int match (const char *re, const char *value)
 	return ret;
 }
 
+static int is_number (const char *cookie, const char *value)
+{
+	if (value[0] == '0')
+		return value[1] == '\0';
+
+	for (; *value != '\0'; ++value)
+		if (!isdigit (*value))
+			return 0;
+
+	return 1;
+}
+
 static int is_print (const char *cookie, const char *value)
 {
 	size_t size = strlen (value);
@@ -76,8 +88,8 @@ static const struct map {
 	},
 	{
 		"number",
-		"^(0|([1-9][0-9]*))$",
-		match,
+		NULL,
+		is_number,
 		"sequence of an one ore more digits; the first digit "
 		"shall not be zero unless it is a single digit",
 	},
