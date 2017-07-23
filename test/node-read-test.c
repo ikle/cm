@@ -7,7 +7,7 @@ int main (int argc, char *argv[])
 {
 	const char *conf;
 	struct cm_node *n;
-	char buf[BUFSIZ];
+	char text[BUFSIZ];
 
 	if (argc < 2) {
 		fprintf (stderr, "usage:\n\tnode-read-test <conf>\n");
@@ -23,12 +23,12 @@ int main (int argc, char *argv[])
 		goto no_read;
 	}
 
-	if (cm_node_print (n, buf, sizeof (buf), ' ') >= sizeof (buf)) {
+	if (cm_node_print (n, text, sizeof (text), ' ') >= sizeof (text)) {
 		fprintf (stderr, "buffer overflow\n");
 		goto no_print;
 	}
 
-	printf ("%s\n", buf);
+	printf ("%s\n", text);
 	cm_node_unref (n);
 	return 0;
 no_print:

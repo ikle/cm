@@ -6,7 +6,7 @@ int main (int argc, char *argv[])
 {
 	const char *conf;
 	struct cm_node *n;
-	char buf[BUFSIZ];
+	char text[BUFSIZ];
 
 	if (argc < 3) {
 		fprintf (stderr, "usage:\n\tnode-validate-test <conf-root>"
@@ -23,8 +23,8 @@ int main (int argc, char *argv[])
 	}
 
 	if (!cm_node_validate (conf, n)) {
-		cm_node_print (n, buf, sizeof (buf), ' ');
-		fprintf (stderr, "%s: syntax error\n", buf);
+		cm_node_print (n, text, sizeof (text), ' ');
+		fprintf (stderr, "%s: syntax error\n", text);
 		goto no_validate;
 	}
 
