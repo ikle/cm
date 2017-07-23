@@ -4,9 +4,30 @@
 #include <stddef.h>
 #include <cm/compiler.h>
 
+/*
+ * The cm_node_init sets the specified buffer for use in subsequent
+ * calls and initializes it.
+ *
+ * Returns pointer to the new node stack or NULL if supplied buffer
+ * too small.
+ */
 struct cm_node *cm_node_init (void *buf, size_t size);
 
+/*
+ * The cm_node_push pushes the supplied value on top of the specified
+ * node stack.
+ *
+ * Returns non-zero on success, zero on internal node buffer overflow.
+ */
 int cm_node_push (struct cm_node *o, const char *value);
+
+/*
+ * The cm_node_pop pops the top node from the specified node stack.
+ *
+ * Returns the value of the former ton node or NULL in case of stack
+ * was empty. The return value lies in the internal node buffer, which
+ * can be overwritten by subsequent calls.
+ */
 char *cm_node_pop (struct cm_node *o);
 
 /*
@@ -32,7 +53,8 @@ int cm_node_read (const char *conf, struct cm_node *o,
  * character then node value will be quoted.
  *
  * Returns pointer into internal node buffer on success, NULL on buffer
- * overflow.
+ * overflow. The return value lies in the internal node buffer, which
+ * can be overwritten by subsequent calls.
  */
 const char *cm_node_print (struct cm_node *o, int sep);
 
