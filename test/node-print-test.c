@@ -21,15 +21,11 @@ int main (int argc, char *argv[])
 
 	if (!cm_node_push_list (&n, argv + 2)) {
 		perror ("cannot push node");
-		goto no_push;
+		return 1;
 	}
 
 	len = cm_node_print (n, text, sizeof (text), argv[1][0]);
 
 	printf ("line[%zu/%zu] = %s\n", len, sizeof (text), text);
-	cm_node_unref (n);
 	return 0;
-no_push:
-	cm_node_unref (n);
-	return 1;
 }

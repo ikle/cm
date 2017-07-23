@@ -22,19 +22,14 @@ int main (int argc, char *argv[])
 	if (!cm_node_read (conf, &n, "interfaces", "ethernet", "eth0",
 			   "mtu", "*", NULL)) {
 		perror ("cannot read node");
-		goto no_read;
+		return 1;
 	}
 
 	if (cm_node_print (n, text, sizeof (text), ' ') >= sizeof (text)) {
 		fprintf (stderr, "buffer overflow\n");
-		goto no_print;
+		return 1;
 	}
 
 	printf ("%s\n", text);
-	cm_node_unref (n);
 	return 0;
-no_print:
-	cm_node_unref (n);
-no_read:
-	return 1;
 }

@@ -6,9 +6,6 @@
 
 struct cm_node *cm_node_init (void *buf, size_t size);
 
-void cm_node_ref   (struct cm_node *o);
-void cm_node_unref (struct cm_node *o);
-
 int cm_node_push (struct cm_node **o, const char *value);
 char *cm_node_pop (struct cm_node **o);
 

@@ -43,16 +43,6 @@ struct cm_node *cm_node_init (void *buf, size_t size)
 	return n;
 }
 
-void cm_node_ref (struct cm_node *o)
-{
-	/* do nothing */
-}
-
-void cm_node_unref (struct cm_node *o)
-{
-	/* do nothing */
-}
-
 static struct item *next_item (struct item *i, const char *value)
 {
 	return align (i->value + strlen (value) + 1);

@@ -21,19 +21,14 @@ int main (int argc, char *argv[])
 
 	if (!cm_node_push_list (&n, argv + 2)) {
 		perror ("cannot push node");
-		goto no_node;
+		return 1;
 	}
 
 	if (!cm_node_validate (conf, n)) {
 		cm_node_print (n, text, sizeof (text), ' ');
 		fprintf (stderr, "%s: syntax error\n", text);
-		goto no_validate;
+		return 1;
 	}
 
-	cm_node_unref (n);
 	return 0;
-no_validate:
-no_node:
-	cm_node_unref (n);
-	return 1;
 }
