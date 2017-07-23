@@ -6,9 +6,8 @@ int main (int argc, char *argv[])
 {
 	char buf[BUFSIZ];
 	const size_t size = sizeof (buf);
-	const char *conf;
+	const char *conf, *s;
 	struct cm_node *n;
-	char text[BUFSIZ];
 
 	if (argc < 3) {
 		fprintf (stderr, "usage:\n\tnode-validate-test <conf-root>"
@@ -24,11 +23,14 @@ int main (int argc, char *argv[])
 		return 1;
 	}
 
-	if (!cm_node_validate (conf, n)) {
-		cm_node_print (n, text, sizeof (text), ' ');
-		fprintf (stderr, "%s: syntax error\n", text);
+	if (cm_node_validate (conf, n))
+		return 0;
+
+	if ((s = cm_node_print (n, ' ')) == NULL) {
+		fprintf (stderr, "buffer overflow\n");
 		return 1;
 	}
 
-	return 0;
+	fprintf (stderr, "%s: syntax error\n", s);
+	return 1;
 }

@@ -38,9 +38,9 @@ node:
 	cd $(CURDIR)
 
 	[ "$$(./node-print-test /   abc def 'ghi jkl' nm)" = \
-	  "line[18/38] = abc/def/ghi jkl/nm" ]
+	  "line = abc/def/ghi jkl/nm" ]
 	[ "$$(./node-print-test ' ' abc def 'ghi jkl' 927 ' op\ "rs" tu')" = \
-	  'line[39/38] = abc def "ghi jkl" 927 " op\\ \"rs\" t' ]
+	  'line = abc def "ghi jkl" 927 " op\\ \"rs\" tu"' ]
 
 	./node-validate-test spec interfaces ethernet eth0 mtu 1500
 

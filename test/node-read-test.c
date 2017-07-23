@@ -7,9 +7,8 @@ int main (int argc, char *argv[])
 {
 	char buf[BUFSIZ];
 	const size_t size = sizeof (buf);
-	const char *conf;
+	const char *conf, *s;
 	struct cm_node *n;
-	char text[BUFSIZ];
 
 	if (argc < 2) {
 		fprintf (stderr, "usage:\n\tnode-read-test <conf>\n");
@@ -25,11 +24,11 @@ int main (int argc, char *argv[])
 		return 1;
 	}
 
-	if (cm_node_print (n, text, sizeof (text), ' ') >= sizeof (text)) {
+	if ((s = cm_node_print (n, ' ')) == NULL) {
 		fprintf (stderr, "buffer overflow\n");
 		return 1;
 	}
 
-	printf ("%s\n", text);
+	printf ("%s\n", s);
 	return 0;
 }

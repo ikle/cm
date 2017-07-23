@@ -127,7 +127,7 @@ static size_t get_room (size_t busy, size_t room)
 	return busy < room ? room - busy : 0;
 }
 
-size_t cm_node_print (struct cm_node *o, char *buf, size_t size, int sep)
+size_t print (struct cm_node *o, char *buf, size_t size, int sep)
 {
 	struct item *i;
 	size_t len, total = 0;
@@ -147,6 +147,16 @@ size_t cm_node_print (struct cm_node *o, char *buf, size_t size, int sep)
 	}
 
 	return total;
+}
+
+const char *cm_node_print (struct cm_node *o, int sep)
+{
+	const size_t size = o->end - o->tail->value;
+
+	if (print (o, o->tail->value, size, sep) >= size)
+		return NULL;
+
+	return o->tail->value;
 }
 
 static int validate_value (const char *spec, const char *value)
@@ -242,7 +252,7 @@ static char *read_value (const char *conf, struct cm_node *o)
 	total = snprintf (buf, sizeof (buf), "%s/", conf);
 	room = get_room (total, sizeof (buf));
 
-	total += cm_node_print (o, buf + total, room, '/');
+	total += print (o, buf + total, room, '/');
 	room = get_room (total, sizeof (buf));
 
 	total += snprintf (buf + total, room, "/node.val");

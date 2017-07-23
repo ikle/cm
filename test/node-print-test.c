@@ -8,8 +8,7 @@ int main (int argc, char *argv[])
 	char buf[BUFSIZ];
 	const size_t size = sizeof (buf);
 	struct cm_node *n;
-	char text[38];
-	size_t len;
+	const char *s;
 
 	if (argc < 3 || strlen (argv[1]) != 1) {
 		fprintf (stderr, "usage:\n\t"
@@ -24,8 +23,11 @@ int main (int argc, char *argv[])
 		return 1;
 	}
 
-	len = cm_node_print (n, text, sizeof (text), argv[1][0]);
+	if ((s = cm_node_print (n, argv[1][0])) == NULL) {
+		fprintf (stderr, "buffer overflow\n");
+		return 1;
+	}
 
-	printf ("line[%zu/%zu] = %s\n", len, sizeof (text), text);
+	printf ("line = %s\n", s);
 	return 0;
 }
