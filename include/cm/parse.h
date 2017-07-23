@@ -1,3 +1,11 @@
+/*
+ * Configuration Management, Parser Helper Module
+ *
+ * Copyright (c) 2011-2017 Alexei A. Smekalkine
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 #ifndef CM_PARSE_H
 #define CM_PARSE_H  1
 

@@ -1,3 +1,11 @@
+/*
+ * Configuration Management, Kind Helper Module
+ *
+ * Copyright (c) 2011-2017 Alexei A. Smekalkine
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 #ifndef CM_KIND_H
 #define CM_KIND_H  1
 

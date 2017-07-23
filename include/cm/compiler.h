@@ -1,3 +1,11 @@
+/*
+ * Configuration Management, Compiler Helper Module
+ *
+ * Copyright (c) 2011-2017 Alexei A. Smekalkine
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 #ifndef CM_COMPILER_H
 #define CM_COMPILER_H  1
 

@@ -1,3 +1,11 @@
+/*
+ * Configuration Management, Parser Helper Module
+ *
+ * Copyright (c) 2011-2017 Alexei A. Smekalkine
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>

@@ -1,3 +1,11 @@
+/*
+ * Configuration Management, Node Helper Module
+ *
+ * Copyright (c) 2011-2017 Alexei A. Smekalkine
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 #ifndef CM_NODE_H
 #define CM_NODE_H  1
 
