@@ -1,7 +1,6 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -210,13 +209,13 @@ int cm_node_validate (const char *conf, struct cm_node *o)
 	return validate (o, o->tail->value, size);
 }
 
-static char *file_read_all (const char *path)
+/* file path should be supplied in buffer */
+static int file_read_all (char *buf, size_t size)
 {
 	FILE *f;
 	long file_size;
-	char *value;
 
-	if ((f = fopen (path, "rb")) == NULL)
+	if ((f = fopen (buf, "rb")) == NULL)
 		goto no_file;
 
 	if (fseek (f, 0, SEEK_END) != 0 || (file_size = ftell (f)) < 0)
@@ -224,31 +223,29 @@ static char *file_read_all (const char *path)
 
 	rewind (f);
 
-	if ((value = malloc (file_size + 1)) == NULL)
-		goto no_value;
+	if ((file_size + 1) > size)
+		goto no_space;
 
-	if (fread (value, file_size, 1, f) != 1)
+	if (fread (buf, file_size, 1, f) != 1)
 		goto no_read;
 
 	fclose (f);
-	value[file_size] = '\0';
-	return value;
+	buf[file_size] = '\0';
+	return 1;
 no_read:
-	free (value);
-no_value:
+no_space:
 no_size:
 	fclose (f);
 no_file:
-	return NULL;
+	return 0;
 }
 
-static char *read_value (const char *conf, struct cm_node *o)
+static int read_value (const char *conf, struct cm_node *o)
 {
 	const size_t size = o->end - o->tail->value;
 	char *buf = o->tail->value;
 
 	size_t total, room;
-	char *value;
 	size_t len;
 
 	total = snprintf (buf, size, "%s/", conf);
@@ -259,16 +256,13 @@ static char *read_value (const char *conf, struct cm_node *o)
 
 	total += snprintf (buf + total, room, "/node.val");
 
-	if (total >= size)
-		return NULL;
+	if (total >= size || !file_read_all (buf, size))
+		return 0;
 
-	if ((value = file_read_all (buf)) == NULL)
-		return NULL;
+	for (len = strlen (buf); len > 0 && isspace (buf[len - 1]); --len)
+		buf[len - 1] = '\0';
 
-	for (len = strlen (value); len > 0 && isspace (value[len - 1]); --len)
-		value[len - 1] = '\0';
-
-	return value;
+	return 1;
 }
 
 int cm_node_read (const char *conf, struct cm_node *o,
@@ -276,20 +270,19 @@ int cm_node_read (const char *conf, struct cm_node *o,
 {
 	va_list ap;
 	struct item *tail = o->tail;
-	char *value;
 
 	va_start (ap, node);
 
 	for (; node != NULL; node = va_arg (ap, const char *)) {
 		if (strcmp (node , "*") == 0) {
 			if (va_arg (ap, const char *) != NULL ||
-			    (value = read_value (conf, o)) == NULL)
+			    !read_value (conf, o))
 				goto no_node;
 
-			if (!cm_node_push (o, value))
+			/* NOTE: value in place already */
+			if (!cm_node_push (o, o->tail->value))
 				goto no_value;
 
-			free (value);
 			break;
 		}
 
@@ -300,7 +293,6 @@ int cm_node_read (const char *conf, struct cm_node *o,
 	va_end (ap);
 	return 1;
 no_value:
-	free (value);
 no_node:
 	o->tail = tail;  /* rewind: remove incomplete path */
 	va_end (ap);
