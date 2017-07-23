@@ -55,6 +55,7 @@ int cm_node_push (struct cm_node *n, const char *value)
 	if (tail->value > n->end)
 		return 0;
 
+	tail->parent = i;
 	n->tail = tail;
 	strcpy (i->value, value);
 
