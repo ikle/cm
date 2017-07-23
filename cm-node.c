@@ -9,73 +9,85 @@
 #include <cm/node.h>
 #include <cm/parse.h>
 
-struct cm_node {
-	long refs;
-	char *value;
-	struct cm_node *root;
+struct item {
+	struct item *parent;
+	char value[];
 };
+
+struct cm_node {
+	struct item *tail;
+	char *end;
+	struct item item[];
+};
+
+static void *align (void *p)  /* align pointer */
+{
+	const size_t size = sizeof (void *);
+	intptr_t a = (intptr_t) p;
+
+	return (void *) (((a + (size - 1)) / size) * size);
+}
 
 struct cm_node *cm_node_init (void *buf, size_t size)
 {
-	return NULL;
+	struct cm_node *n = align (buf);
+
+	if (size < (sizeof (*n) + sizeof (n->item[0])))
+		return NULL;
+
+	n->tail = n->item;
+	n->end  = buf + size;
+
+	n->item[0].parent = NULL;
+
+	return n;
 }
 
 void cm_node_ref (struct cm_node *o)
 {
-	if (o != NULL)
-		++o->refs;
+	/* do nothing */
 }
 
 void cm_node_unref (struct cm_node *o)
 {
-	if (o == NULL || (--o->refs) > 0)
-		return;
+	/* do nothing */
+}
 
-	cm_node_unref (o->root);
-
-	free (o->value);
-	free (o);
+static struct item *next_item (struct item *i, const char *value)
+{
+	return align (i->value + strlen (value) + 1);
 }
 
 int cm_node_push (struct cm_node **o, const char *value)
 {
-	struct cm_node *root = *o, *head;
+	struct cm_node *n = *o;
+	struct item *i = n->tail;
+	struct item *tail = next_item (i, value);
 
-	if ((head = malloc (sizeof (*head))) == NULL)
-		goto no_node;
+	if (tail->value > n->end)
+		return 0;
 
-	if ((head->value = strdup (value)) == NULL)
-		goto no_value;
+	n->tail = tail;
+	strcpy (i->value, value);
 
-	if (root != NULL)
-		cm_node_ref (root);
-
-	head->refs = 1;
-	head->root = root;
-
-	*o = head;
 	return 1;
-no_value:
-	free (head);
-no_node:
-	return 0;
 }
 
 char *cm_node_pop (struct cm_node **o)
 {
-	struct cm_node *head = *o, *root = head->root;
-	char *value = head->value;
+	struct cm_node *n = *o;
+	struct item *i = n->tail;
 
-	cm_node_ref (root);  /* detach root  */
-	head->value = NULL;  /* detach value */
+	if (i == NULL)
+		return NULL;
 
-	cm_node_unref (head);
-	*o = root;
-	return value;
+	n->tail = i->parent;
+	return i->value;
 }
 
 int cm_node_push_list (struct cm_node **o, char *argv[])
 {
+	struct item *tail = (*o)->tail;
 	size_t i;
 
 	for (i = 0; argv[i] != NULL; ++i)
@@ -84,9 +96,7 @@ int cm_node_push_list (struct cm_node **o, char *argv[])
 
 	return 1;
 rewind:
-	for (; i > 0; --i)
-		free (cm_node_pop (o));
-
+	(*o)->tail = tail;  /* rewind: remove incomplete path */
 	return 0;
 }
 
@@ -131,20 +141,24 @@ static size_t get_room (size_t busy, size_t room)
 
 size_t cm_node_print (struct cm_node *o, char *buf, size_t size, int sep)
 {
+	struct item *i;
 	size_t len, total = 0;
 
-	if (o->root != NULL) {
-		len = cm_node_print (o->root, buf, size, sep);
-		total += len, buf += len, size = get_room (len, size);
+	for (i = o->item; i < o->tail; i = next_item (i, i->value)) {
+		if (i != o->item) {
+			len = snprintf (buf, size, "%c", sep);
+			total += len, buf += len, size = get_room (len, size);
+		}
 
-		len = snprintf (buf, size, "%c", sep);
+		if (sep != ' ' || cm_kind_validate ("name, number", i->value))
+			len = snprintf (buf, size, "%s", i->value);
+		else
+			len = cm_print_escaped (i->value, buf, size);
+
 		total += len, buf += len, size = get_room (len, size);
 	}
 
-	if (sep != ' ' || cm_kind_validate ("name, number", o->value))
-		return total + snprintf (buf, size, "%s", o->value);
-
-	return total + cm_print_escaped (o->value, buf, size);
+	return total;
 }
 
 static int validate_value (const char *spec, const char *value)
@@ -160,35 +174,32 @@ static int validate_value (const char *spec, const char *value)
 	return ret;
 }
 
-static size_t validate (struct cm_node *o, char *buf, size_t size)
+static int validate (struct cm_node *o, char *buf, size_t size)
 {
+	struct item *i;
 	size_t total = strlen (buf), room = size, len;
 
-	if (o->root != NULL) {
-		if ((total = validate (o->root, buf, size)) == 0 ||
-		    total >= size)
+	for (i = o->item; i < o->tail; i = next_item (i, i->value)) {
+		len = snprintf (buf + total, room, "%s/", i->value);
+
+		if ((total + len) >= size)
 			return 0;
 
-		room = get_room (total, size);
+		if (access (buf, F_OK) == 0) {  /* is regular? */
+			total += len, room = get_room (total, size);
+			continue;
+		}
 
-		total += snprintf (buf + total, room, "/");
-		room = get_room (total, size);
+		len = snprintf (buf + total, room, "node.spec");
+
+		if ((total + len) >= size || !validate_value (buf, i->value))
+			return 0;
+
+		len = snprintf (buf + total, room, "node.tag/");
+		total += len, room = get_room (total, size);
 	}
 
-	len = snprintf (buf + total, room, "%s", o->value);
-
-	if ((total + len) >= size)
-		return 0;
-
-	if (access (buf, F_OK) == 0)  /* is regular? */
-		return total + len;
-
-	len = snprintf (buf + total, room, "node.spec");
-
-	if ((total + len) >= size || !validate_value (buf, o->value))
-		return 0;
-
-	return total + snprintf (buf + total, room, "node.tag");
+	return 1;
 }
 
 int cm_node_validate (const char *conf, struct cm_node *o)
@@ -198,7 +209,7 @@ int cm_node_validate (const char *conf, struct cm_node *o)
 	if (snprintf (buf, sizeof (buf), "%s/", conf) >= sizeof (buf))
 		return 0;
 
-	return validate (o, buf, sizeof (buf)) > 0;
+	return validate (o, buf, sizeof (buf));
 }
 
 static char *file_read_all (const char *path)
@@ -264,11 +275,10 @@ int cm_node_read (const char *conf, struct cm_node **o,
 		  const char *node, ...)
 {
 	va_list ap;
-	struct cm_node *root = *o;
+	struct item *tail = (*o)->tail;
 	char *value;
 
 	va_start (ap, node);
-	cm_node_ref (root);  /* acquire root for rewind in case of errors */
 
 	for (; node != NULL; node = va_arg (ap, const char *)) {
 		if (strcmp (node , "*") == 0) {
@@ -287,14 +297,12 @@ int cm_node_read (const char *conf, struct cm_node **o,
 			goto no_node;
 	}
 
-	cm_node_unref (root);  /* release root */
 	va_end (ap);
 	return 1;
 no_value:
 	free (value);
 no_node:
-	cm_node_unref (*o);    /* rewind: remove incomplete path */
-	cm_node_unref (root);  /* release root */
+	(*o)->tail = tail;  /* rewind: remove incomplete path */
 	va_end (ap);
 	return 0;
 }
