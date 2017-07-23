@@ -26,8 +26,10 @@ clean:
 PREFIX ?= /usr/local
 
 install: $(TARGETS)
-	install -D -d $(DESTDIR)/$(PREFIX)/bin
-	install -s -m 0755 $^ $(DESTDIR)/$(PREFIX)/bin
+	install -D -m 644 $(AFILE)  $(DESTDIR)$(PREFIX)/lib/$(AFILE)
+	install -D -m 755 $(SOFILE) $(DESTDIR)$(PREFIX)/lib/$(SOFILE)
+	ln -sf $(SOFILE) $(DESTDIR)$(PREFIX)/lib/$(SONAME)
+	ln -sf $(SONAME) $(DESTDIR)$(PREFIX)/lib/$(LIBNAME).so
 
 $(AFILE): $(OBJECTS)
 	$(AR) rc $@ $^
