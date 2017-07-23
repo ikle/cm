@@ -5,6 +5,8 @@
 
 int main (int argc, char *argv[])
 {
+	char buf[BUFSIZ];
+	const size_t size = sizeof (buf);
 	const char *conf;
 	struct cm_node *n;
 	char text[BUFSIZ];
@@ -15,7 +17,7 @@ int main (int argc, char *argv[])
 	}
 
 	conf = argv[1];
-	n = NULL;
+	n = cm_node_init (buf, size);
 
 	if (!cm_node_read (conf, &n, "interfaces", "ethernet", "eth0",
 			   "mtu", "*", NULL)) {

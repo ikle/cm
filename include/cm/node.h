@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <cm/compiler.h>
 
-struct cm_node;
+struct cm_node *cm_node_init (void *buf, size_t size);
 
 void cm_node_ref   (struct cm_node *o);
 void cm_node_unref (struct cm_node *o);

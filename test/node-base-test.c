@@ -4,6 +4,8 @@
 
 int main (int argc, char *argv[])
 {
+	char buf[BUFSIZ];
+	const size_t size = sizeof (buf);
 	struct cm_node *a, *b;
 
 	if (argc < 2) {
@@ -11,7 +13,7 @@ int main (int argc, char *argv[])
 		return 1;
 	}
 
-	a = NULL;
+	a = cm_node_init (buf, size);
 
 	if (!cm_node_push_list (&a, argv + 1)) {
 		perror ("cannot push node");

@@ -15,6 +15,11 @@ struct cm_node {
 	struct cm_node *root;
 };
 
+struct cm_node *cm_node_init (void *buf, size_t size)
+{
+	return NULL;
+}
+
 void cm_node_ref (struct cm_node *o)
 {
 	if (o != NULL)
