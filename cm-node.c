@@ -327,6 +327,9 @@ no_file:
 	return 0;
 }
 
+#include <errno.h>
+#include <sys/stat.h>
+
 int cm_node_write (const char *conf, struct cm_node *o)
 {
 	struct item *tail = o->tail;
@@ -334,18 +337,25 @@ int cm_node_write (const char *conf, struct cm_node *o)
 	const size_t size = o->end - o->tail->value;
 	char *buf = o->tail->value;
 
-	size_t total, room;
-
-	total = snprintf (buf, size, "%s/", conf);
-	room = get_room (total, size);
+	size_t total = 0, room = size;
+	struct item *i;
 
 	if (tail->parent == NULL)
 		return 0;  /* EINVAL */
 
 	o->tail = tail->parent;
 
-	total += print (o, buf + total, room, '/');
+	total += snprintf (buf, size, "%s", conf);
 	room = get_room (total, size);
+
+	for (i = o->item; i < o->tail; i = next_item (i, i->value)) {
+		total += snprintf (buf + total, room, "/%s", i->value);
+		room = get_room (total, size);
+
+		if (total >= size ||
+		    (mkdir (buf, 0777) != 0 && errno != EEXIST))
+			goto no_mkdir;
+	}
 
 	o->tail = tail;
 
@@ -355,4 +365,7 @@ int cm_node_write (const char *conf, struct cm_node *o)
 		return 0;
 
 	return 1;
+no_mkdir:
+	o->tail = tail;
+	return 0;
 }

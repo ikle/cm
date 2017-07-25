@@ -51,4 +51,5 @@ node:
 	[ "$$(./node-read-test conf)" = 'interfaces ethernet eth0 mtu "test value"' ]
 
 	./node-write-test conf
+	cat conf/interfaces/ethernet/eth0/ttl/node.val
 	rm -rf conf/interfaces/ethernet/eth0/ttl

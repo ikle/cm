@@ -33,7 +33,7 @@
 
 # Primary tasks
 
-1.  [ ] Create leading directories for non-leaf nodes while writing node
+1.  [x] Create leading directories for non-leaf nodes while writing node
     stack. ~~(Use recursion.)~~
 2.  [ ] Implement `cm_node_run` — execute the supplied node stack, wait for
     process termination and return result value.
