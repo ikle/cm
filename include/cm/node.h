@@ -1,7 +1,7 @@
 /*
  * Configuration Management, Node Helper Module
  *
- * Copyright (c) 2011-2017 Alexei A. Smekalkine
+ * Copyright (c) 2011-2021 Alexei A. Smekalkine
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -32,7 +32,7 @@ int cm_node_push (struct cm_node *o, const char *value);
 /*
  * The cm_node_pop pops the top node from the specified node stack.
  *
- * Returns the value of the former ton node or NULL in case of stack
+ * Returns the value of the former top node or NULL in case of stack
  * was empty. The return value lies in the internal node buffer, which
  * can be overwritten by subsequent calls.
  */
