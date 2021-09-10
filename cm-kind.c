@@ -1,7 +1,7 @@
 /*
  * Configuration Management, Kind Helper Module
  *
- * Copyright (c) 2011-2017 Alexei A. Smekalkine
+ * Copyright (c) 2011-2021 Alexei A. Smekalkine
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -94,14 +94,14 @@ static const struct map {
 	{
 		"name",
 		is_name,
-		"sequence of an one ore more Latin letters, digits and "
+		"sequence of an one or more Latin letters, digits and "
 		"dashes; a dash shall not be the last character; a dash "
 		"shall not be immediately followed by another dash",
 	},
 	{
 		"number",
 		is_number,
-		"sequence of an one ore more digits; the first digit "
+		"sequence of an one or more digits; the first digit "
 		"shall not be zero unless it is a single digit",
 	},
 	{
